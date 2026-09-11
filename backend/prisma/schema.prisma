@@ -11,3 +11,59 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// User model represents a user in the system
+model User {
+  id           String @id @default(cuid())
+  email        String @unique
+  name         String
+  passwordHash String
+
+  tasks    Task[]
+  timeLogs TimeLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Task Status
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// Task model
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String     @default("")
+  status      TaskStatus @default(PENDING)
+  userId      String
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timeLogs TimeLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// Time Log Model
+model TimeLog {
+  id        String    @id @default(cuid())
+  taskId    String
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  duration  Int?
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([taskId])
+}
