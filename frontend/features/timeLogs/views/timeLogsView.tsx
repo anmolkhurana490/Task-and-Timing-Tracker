@@ -8,6 +8,12 @@ function formatDuration(seconds: number | null) {
   return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
 }
 
+function computeDuration(start: string, end: string | null) {
+  const startDate = new Date(start).getTime();
+  const endDate = new Date(end ?? Date.now()).getTime();
+  return Math.max(0, Math.floor((endDate - startDate) / 1000));
+}
+
 export default function TimeLogsView() {
   const { logs, error, loading, loadLogs } = useTimeLogViewModel();
 
@@ -15,10 +21,7 @@ export default function TimeLogsView() {
     void loadLogs();
   }, [loadLogs]);
 
-  const totalSeconds = logs.reduce(
-    (total, log) => total + (log.duration ?? 0),
-    0,
-  );
+  const totalSeconds = logs.reduce((total, log) => total + computeDuration(log.startedAt, log.endedAt), 0);
 
   return (
     <main className="mx-auto max-w-310 px-5 py-10 sm:px-8 sm:py-16">
@@ -71,7 +74,7 @@ export default function TimeLogsView() {
                 {new Date(log.startedAt).toLocaleString()}
               </span>
               <span className="font-serif text-lg text-[#476257]">
-                {formatDuration(log.duration)}
+                {formatDuration(computeDuration(log.startedAt, log.endedAt))}
               </span>
               <span className="text-[#6d7973]">
                 {log.endedAt ? "Completed" : "Active"}

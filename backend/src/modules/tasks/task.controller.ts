@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import { createTaskService, deleteTaskService, getTaskService, getTasksService, updateTaskService } from "./task.service.js";
+import { createTaskService, deleteTaskService, generateTaskSuggestions, getTaskService, getTasksService, updateTaskService } from "./task.service.js";
+import type { SuggestionQueryInput } from "./task.validation.js";
 
 /** Returns all tasks owned by the authenticated user. */
 export async function getTasksController(req: Request, res: Response, next: NextFunction) {
@@ -46,6 +47,17 @@ export async function deleteTaskController(req: Request, res: Response, next: Ne
   try {
     await deleteTaskService(req.params.id as string, req.userId as string);
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** Get AI Generated Task Suggestion */
+export async function getTaskSuggestionController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const query = req.valQuery as SuggestionQueryInput;
+    const data = await generateTaskSuggestions(query.user_input);
+    res.json(data);
   } catch (error) {
     next(error);
   }

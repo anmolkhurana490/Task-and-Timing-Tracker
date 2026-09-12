@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { StartTimeInput, TimeLog } from "./types";
+import type { StartTimeInput, TimeLog } from "./models/timeLogs";
 
 export async function getTimeLogsAPI(): Promise<TimeLog[]> {
   const response = await api.get<TimeLog[]>("time-logs");
@@ -11,8 +11,8 @@ export async function startTimeAPI(input: StartTimeInput): Promise<TimeLog> {
   return response.data;
 }
 
-export async function stopTimeAPI(id: string): Promise<Pick<TimeLog, "id" | "endedAt" | "duration">> {
-  const response = await api.post<Pick<TimeLog, "id" | "endedAt" | "duration">>(`time-logs/${id}/stop`);
+export async function stopTimeAPI(id: string): Promise<Pick<TimeLog, "id" | "endedAt">> {
+  const response = await api.post<Pick<TimeLog, "id" | "endedAt">>(`time-logs/${id}/stop`);
   return response.data;
 }
 

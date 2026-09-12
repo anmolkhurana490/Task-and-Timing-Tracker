@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { CreateTaskInput, Task, UpdateTaskInput } from "./types";
+import type { CreateTaskInput, Task, TaskSuggestion, UpdateTaskInput } from "./models/tasks";
 
 export async function getTasksAPI(): Promise<Task[]> {
   const response = await api.get<Task[]>("tasks");
@@ -18,4 +18,11 @@ export async function updateTaskAPI(id: string, input: UpdateTaskInput): Promise
 
 export async function deleteTaskAPI(id: string): Promise<void> {
   await api.delete(`tasks/${id}`);
+}
+
+export async function generateTaskSuggestionsAPI(user_input: string): Promise<TaskSuggestion[]> {
+  const queryString = new URLSearchParams({ user_input }).toString();
+  const response = await api.get<TaskSuggestion[]>(`tasks/suggestions?${queryString}`);
+
+  return response.data;
 }

@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import { useAppStore } from "../../../shared/stores/useAppStore";
-import { getActiveLogsAPI, getTimeLogsAPI, startTimeAPI, stopTimeAPI } from "../repository";
+import { getTimeLogsAPI, startTimeAPI, stopTimeAPI } from "../repository";
 
 export function useTimeLogViewModel() {
   const { logs, setLogs, addLog, updateLog } = useAppStore();

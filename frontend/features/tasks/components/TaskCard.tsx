@@ -1,6 +1,6 @@
 import { useTimeLogViewModel } from "@/features/timeLogs/viewmodels/useTimeLogViewModel";
-import { Task, TaskStatus } from "../types";
-import { TimeLog } from "@/features/timeLogs/types";
+import { Task, TaskStatus } from "../models/tasks";
+import { TimeLog } from "@/features/timeLogs/models/timeLogs";
 
 interface TaskCardProps {
   task: Task;

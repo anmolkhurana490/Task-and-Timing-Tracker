@@ -14,6 +14,11 @@ export interface CreateTaskInput {
   description?: string;
 }
 
+export interface TaskSuggestion {
+  title: string;
+  description: string;
+}
+
 export interface UpdateTaskInput {
   title?: string;
   description?: string;

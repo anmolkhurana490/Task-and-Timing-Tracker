@@ -1,11 +1,15 @@
-import type { Task } from "../tasks/types";
-import type { TimeLog } from "../timeLogs/types";
+import type { Task } from "../tasks/models/tasks";
+import type { TimeLog } from "../timeLogs/models/timeLogs";
 
-export interface DashboardData {
+export interface DailyDashboardData {
   date: string;
-  tasksWorkedOn: Task[];
+  totalTasks: number;
   totalTimeTracked: number;
-  completedTasks: Task[];
-  pendingTasks: Task[];
-  logs?: TimeLog[];
+  completedTasks: number;
+  notCompletedTasks: number;
+}
+
+export interface OutstandingData {
+  notCompletedTasks: Task[];
+  activeTimeLogs: TimeLog[];
 }

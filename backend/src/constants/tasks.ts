@@ -1,1 +1,0 @@
-export const TASK_STATUS = ["PENDING", "IN_PROGRESS", "COMPLETED"]

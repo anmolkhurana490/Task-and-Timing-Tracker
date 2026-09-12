@@ -7,7 +7,8 @@ import { ValidationError } from "../config/errors";
 export function validate(schema: z.ZodType, source: "body" | "query" | "params" = "body"): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      req[source] = schema.parse(req[source]);
+      if (source === "query") req["valQuery"] = schema.parse(req[source]);
+      else req[source] = schema.parse(req[source]);
       next();
     }
     catch (error) {

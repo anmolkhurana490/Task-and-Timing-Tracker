@@ -2,14 +2,16 @@
 
 import { useCallback } from "react";
 import { useState } from "react";
-import { createTaskAPI, deleteTaskAPI, getTasksAPI, updateTaskAPI } from "../repository";
+import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, updateTaskAPI } from "../repository";
 import { useAppStore } from "../../../shared/stores/useAppStore";
-import type { CreateTaskInput, TaskStatus, UpdateTaskInput } from "../types";
+import type { CreateTaskInput, TaskStatus, TaskSuggestion, UpdateTaskInput } from "../models/tasks";
 
 export function useTaskViewModel() {
   const { tasks, setTasks, addTask, replaceTask, removeTask } = useAppStore();
 
   const [loading, setLoading] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestions, setSuggestions] = useState<TaskSuggestion[]>([]);
   const [error, setError] = useState("");
 
   const loadTasks = useCallback(async () => {
@@ -27,13 +29,41 @@ export function useTaskViewModel() {
   }, [setError, setLoading, setTasks]);
 
   async function createTask(input: CreateTaskInput) {
+    setError("");
     try {
       const taskData = await createTaskAPI(input);
       addTask(taskData);
+      return true;
     }
     catch {
       setError("Unable to create task.");
+      return false;
     }
+  }
+
+  async function suggestTasks(input: string) {
+    if (input.trim().length < 10) {
+      setError("Describe what you need to do in at least 10 characters.");
+      return;
+    }
+
+    setError("");
+    setSuggesting(true);
+    try {
+      const result = await generateTaskSuggestionsAPI(input.trim());
+      setSuggestions(result);
+    }
+    catch {
+      setError("Unable to generate task suggestions.");
+      setSuggestions([]);
+    }
+    finally {
+      setSuggesting(false);
+    }
+  }
+
+  function clearSuggestions() {
+    setSuggestions([]);
   }
 
   async function updateStatus(id: string, status: TaskStatus) {
@@ -68,5 +98,18 @@ export function useTaskViewModel() {
     }
   }
 
-  return { tasks, loading, error, loadTasks, createTask, updateStatus, updateTask, deleteTask };
+  return {
+    tasks,
+    loading,
+    suggesting,
+    suggestions,
+    error,
+    loadTasks,
+    createTask,
+    suggestTasks,
+    clearSuggestions,
+    updateStatus,
+    updateTask,
+    deleteTask,
+  };
 }

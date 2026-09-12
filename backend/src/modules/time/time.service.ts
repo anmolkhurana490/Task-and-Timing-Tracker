@@ -24,12 +24,11 @@ export async function stopTimeService(userId: string, id: string) {
   if (!currentLog || currentLog.endedAt) throw new AuthError("Active time log not found", 404);
 
   const endedAt = new Date();
-  const duration = Math.max(0, Math.floor((endedAt.getTime() - currentLog.startedAt.getTime()) / 1000));
 
-  const log = await stopTimeLog(id, userId, endedAt, duration);
+  const log = await stopTimeLog(id, userId, endedAt);
   if (!log) throw new AuthError("Active time log not found", 404);
 
-  return { id, endedAt, duration };
+  return { id, endedAt };
 }
 
 /** Gets active timer logs of tasks */

@@ -1,3 +1,5 @@
+import type { Prisma } from "../../../generated/prisma/browser.js";
+import { TaskStatus } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
 import type { StartTimeInput } from "./time.validation.js";
 
@@ -32,14 +34,51 @@ export function insertTimeLog(userId: string, data: StartTimeInput) {
 }
 
 /** Stops a log only when it belongs to the user. */
-export function stopTimeLog(id: string, userId: string, endedAt: Date, duration: number) {
-  return prisma.timeLog.update({ where: { id, userId, endedAt: null }, data: { endedAt, duration } });
+export function stopTimeLog(id: string, userId: string, endedAt: Date) {
+  return prisma.timeLog.update({ where: { id, userId, endedAt: null }, data: { endedAt } });
 }
 
-/** Returns today's owned tasks and logs for the dashboard. */
-export function findTodayDashboardData(userId: string, start: Date, end: Date) {
+/** Task with Logs Type for Dashboard Purpose */
+export type DashboardTask = Prisma.TaskGetPayload<{
+  include: { timeLogs: true };
+}>;
+
+/** Returns owned tasks with logs for the dashboard from start to end date. */
+export function findDashboardData(userId: string, start: Date, end: Date) {
+  const overlappingLogs = {
+    startedAt: { lt: end },
+    OR: [
+      { endedAt: null },
+      { endedAt: { gt: start } },
+    ],
+  };
+
+  return prisma.task.findMany({
+    where: {
+      userId,
+      timeLogs: { some: overlappingLogs }
+    },
+
+    include: {
+      timeLogs: {
+        where: overlappingLogs
+      }
+    }
+  });
+}
+
+/** Returns unfinished tasks and active logs. */
+export function findOutstandingDashboardData(userId: string) {
   return Promise.all([
-    prisma.task.findMany({ where: { userId }, include: { timeLogs: { where: { startedAt: { lt: end }, OR: [{ endedAt: null }, { endedAt: { gte: start } }] } } } }),
-    prisma.timeLog.findMany({ where: { userId, startedAt: { lt: end }, OR: [{ endedAt: null }, { endedAt: { gte: start } }] } }),
+    prisma.task.findMany({
+      where: { userId, status: { not: TaskStatus.COMPLETED } },
+      orderBy: { updatedAt: "desc" }
+    }),
+
+    prisma.timeLog.findMany({
+      where: { userId, endedAt: null },
+      include: { task: true },
+      orderBy: { startedAt: "asc" },
+    }),
   ]);
 }

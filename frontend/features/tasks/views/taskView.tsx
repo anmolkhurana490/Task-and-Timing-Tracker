@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useTaskViewModel } from "../viewmodels/useTaskViewModel";
-import type { Task, TaskStatus } from "../types";
+import type { Task, TaskStatus } from "../models/tasks";
 import { useTimeLogViewModel } from "../../timeLogs/viewmodels/useTimeLogViewModel";
 import TaskCard, { statusLabels } from "../components/TaskCard";
 
 export default function TasksView() {
-  const { tasks, error, loading, loadTasks, createTask, updateStatus, updateTask, deleteTask } = useTaskViewModel();
+  const { tasks, error, loading, suggesting, suggestions, loadTasks, createTask, suggestTasks, clearSuggestions, updateStatus, updateTask, deleteTask } = useTaskViewModel();
   const { logs: taskLogs, loadLogs } = useTimeLogViewModel();
 
   const [newTask, setNewTask] = useState("");
@@ -22,11 +22,17 @@ export default function TasksView() {
     loadLogs();
   }, [loadTasks, loadLogs]);
 
-  function addTask(event: React.SubmitEvent) {
+  function addTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!newTask.trim()) return;
     void createTask({ title: newTask.trim() });
     setNewTask("");
+    clearSuggestions();
+  }
+
+  async function chooseSuggestion(title: string, description: string) {
+    const created = await createTask({ title, description });
+    if (created) clearSuggestions();
   }
 
   const visibleTasks = filter === "All" ? tasks : tasks.filter((task) => task.status === filter);
@@ -86,7 +92,40 @@ export default function TasksView() {
         >
           Add task <span className="ml-2 text-[#df7455]">↗</span>
         </button>
+        <button
+          className="rounded-full border border-[#476257] px-5 py-3 text-sm font-bold text-[#476257] disabled:cursor-not-allowed disabled:opacity-50"
+          type="button"
+          disabled={suggesting || newTask.trim().length < 10}
+          onClick={() => void suggestTasks(newTask)}
+        >
+          {suggesting ? "Thinking..." : "Suggest tasks"}
+        </button>
       </form>
+
+      {suggestions.length > 0 && (
+        <section className="relative z-10 -mt-6 mb-8 border border-[#d9ddd4] bg-[#fffefa] p-4 shadow-[0_14px_35px_rgba(71,98,87,0.08)]" aria-label="Suggested tasks">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#df7455]">Suggestions</p>
+              <p className="mt-1 text-sm text-[#6d7973]">Choose one to add it to your task list.</p>
+            </div>
+            <button className="text-xs font-bold text-[#6d7973] underline underline-offset-4" type="button" onClick={clearSuggestions}>Dismiss</button>
+          </div>
+          <div className="grid gap-2">
+            {suggestions.map((suggestion) => (
+              <button
+                className="w-full border border-[#d9ddd4] p-4 text-left transition-colors hover:border-[#476257] hover:bg-[#f5f7f1]"
+                key={`${suggestion.title}-${suggestion.description}`}
+                type="button"
+                onClick={() => void chooseSuggestion(suggestion.title, suggestion.description)}
+              >
+                <span className="block text-sm font-bold text-[#26302d]">{suggestion.title}</span>
+                <span className="mt-1 block text-xs leading-relaxed text-[#6d7973]">{suggestion.description}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="mb-5 flex flex-wrap gap-2" aria-label="Task filters">
         {(["All", "PENDING", "IN_PROGRESS", "COMPLETED"] as const).map(

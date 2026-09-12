@@ -57,7 +57,6 @@ model TimeLog {
   userId    String
   startedAt DateTime  @default(now())
   endedAt   DateTime?
-  duration  Int?
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
