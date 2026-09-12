@@ -15,3 +15,8 @@ export async function stopTimeAPI(id: string): Promise<Pick<TimeLog, "id" | "end
   const response = await api.post<Pick<TimeLog, "id" | "endedAt" | "duration">>(`time-logs/${id}/stop`);
   return response.data;
 }
+
+export async function getActiveLogsAPI(): Promise<TimeLog[]> {
+  const response = await api.get<TimeLog[]>(`time-logs/active`);
+  return response.data;
+}

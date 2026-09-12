@@ -6,9 +6,14 @@ export function findTimeLogs(userId: string) {
   return prisma.timeLog.findMany({ where: { userId }, include: { task: true }, orderBy: { startedAt: "desc" } });
 }
 
-/** Finds an active timer for a user and task. */
-export function findActiveTimeLog(taskId: string, userId: string) {
-  return prisma.timeLog.findFirst({ where: { taskId, userId, endedAt: null } });
+/** Lists active time logs owned by a user. */
+export function findActiveTimeLogs(userId: string) {
+  return prisma.timeLog.findMany({ where: { userId, endedAt: null }, orderBy: { startedAt: "desc" } });
+}
+
+/** Finds an active timer for a task. */
+export function findActiveTimeLog(taskId: string) {
+  return prisma.timeLog.findFirst({ where: { taskId, endedAt: null } });
 }
 
 /** Confirms that a task belongs to the user starting the timer. */

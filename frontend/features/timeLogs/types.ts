@@ -4,7 +4,7 @@ export interface TimeLog {
   startedAt: string;
   endedAt: string | null;
   duration: number | null;
-  task: { id: string; title: string };
+  task?: { id: string; title: string };
 }
 
 export interface StartTimeInput {

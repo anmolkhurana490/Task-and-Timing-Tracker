@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { getTimeLogsService, startTimeService, stopTimeService } from "./time.service.js";
+import { getActiveLogsService, getTimeLogsService, startTimeService, stopTimeService } from "./time.service.js";
 
 /** Lists the authenticated user's time logs. */
 export async function getTimeLogsController(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -26,6 +26,16 @@ export async function stopTimeController(req: Request, res: Response, next: Next
   try {
     const data = await stopTimeService(req.userId as string, req.params.id as string);
     res.json(data);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** Gets active logs of user's tasks. */
+export async function getActiveLogsController(req: Request, res: Response, next: NextFunction) {
+  try {
+    const activeLog = await getActiveLogsService(req.userId as string);
+    res.json(activeLog);
   } catch (error) {
     next(error);
   }

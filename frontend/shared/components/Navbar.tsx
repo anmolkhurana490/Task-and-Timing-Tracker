@@ -27,7 +27,7 @@ export function Navbar() {
     }
 
     updateUser();
-  }, []);
+  }, [setUser]);
 
   return (
     <header className="mx-auto flex w-full max-w-310 items-center justify-between border-b border-[#d9ddd4] px-5 py-7 sm:px-8">
