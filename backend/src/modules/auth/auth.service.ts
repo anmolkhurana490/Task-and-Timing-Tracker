@@ -1,5 +1,5 @@
 import { createUser, findUserByEmail, findUserById, type AuthUser } from "./auth.dao.js";
-import { AuthError } from "../../config/errors.js";
+import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/errors.js";
 import { comparePassword, hashPassword, signAuthToken } from "../../utils/auth.js";
 import { type LoginInput, type RegisterInput } from "./auth.validation.js";
 import { setCache, delCache } from "../../utils/cache.js";
@@ -13,7 +13,7 @@ function selectUserFields(user: AuthUser) {
 /** Registers a new user after hashing and validating the password. */
 export async function registerService(data: RegisterInput) {
   const email = data.email.toLowerCase();
-  if (await findUserByEmail(email)) throw new AuthError("Email is already registered", 409);
+  if (await findUserByEmail(email)) throw new ConflictError("Email is already registered");
 
   const passwordHash = await hashPassword(data.password);
   const user = await createUser({ email, name: data.name, passwordHash });
@@ -24,10 +24,10 @@ export async function registerService(data: RegisterInput) {
 /** Verifies credentials and returns a fresh signed JWT. */
 export async function loginService(data: LoginInput) {
   const user = await findUserByEmail(data.email.toLowerCase());
-  if (!user) throw new AuthError("Invalid email or password", 401);
+  if (!user) throw new UnauthorizedError("Invalid email or password");
 
   const passwordMatches = await comparePassword(data.password, user.passwordHash);
-  if (!passwordMatches) throw new AuthError("Invalid email or password", 401);
+  if (!passwordMatches) throw new UnauthorizedError("Invalid email or password");
 
   const sessionKey = generateSessionCacheKey(user.id);
   await setCache(sessionKey, selectUserFields(user), AUTH_REDIS_EXPIRY_SECONDS);
@@ -44,6 +44,6 @@ export async function logoutService(userId: string) {
 /** Returns the authenticated user's public profile. */
 export async function getMeService(userId: string) {
   const user = await findUserById(userId);
-  if (!user) throw new AuthError("User not found", 404);
+  if (!user) throw new NotFoundError("User not found");
   return user;
 }

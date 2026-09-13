@@ -1,9 +1,9 @@
 import type { RequestHandler } from "express";
-import { AuthError } from "../config/errors.js";
+import { UnauthorizedError } from "../utils/errors.js";
 import { verifyAuthToken } from "../utils/auth.js";
 import { getCache } from "../utils/cache.js";
 import { generateSessionCacheKey } from "../constants/auth.js";
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
 import type { CustomRequest } from "../types/express.js";
 
 /** Adds the authenticated user's id to the request from a bearer token or cookie. */
@@ -12,18 +12,18 @@ export const authMiddleware: RequestHandler = async (req: CustomRequest, _res: R
   const bearerToken = authorization?.startsWith("Bearer ") ? authorization.slice(7) : undefined;
 
   if (!bearerToken) {
-    next(new AuthError("Authentication required", 401));
+    next(new UnauthorizedError("Authentication required"));
     return;
   }
 
   try {
     const payload = verifyAuthToken(bearerToken);
-    if (!payload) throw new AuthError("Invalid or expired token", 401);
+    if (!payload) throw new UnauthorizedError("Invalid or expired token");
 
     // verify session cache in Redis
     const sessionKey = generateSessionCacheKey(payload.sub as string);
     const userSession = await getCache(sessionKey);
-    if (!userSession) throw new AuthError("Session expired", 401);
+    if (!userSession) throw new UnauthorizedError("Session expired");
 
     req.userId = payload.sub as string;
     next();

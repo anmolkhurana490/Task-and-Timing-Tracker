@@ -18,6 +18,7 @@ export function useDashboardViewModel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Independent requests let successful dashboard sections render when one endpoint fails.
   const loadDashboard = useCallback(async () => {
     setLoading(true);
 

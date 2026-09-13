@@ -17,11 +17,13 @@ export default function TasksView() {
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
 
+  // Initial task and log loads keep task cards and timer controls in sync.
   useEffect(() => {
     loadTasks();
     loadLogs();
   }, [loadTasks, loadLogs]);
 
+  // Direct task creation clears the suggestion context because the input has been consumed.
   function addTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!newTask.trim()) return;
@@ -30,19 +32,23 @@ export default function TasksView() {
     clearSuggestions();
   }
 
+  // A selected suggestion is already a complete create payload.
   async function chooseSuggestion(title: string, description: string) {
     const created = await createTask({ title, description });
     if (created) clearSuggestions();
   }
 
+  // Filtering is derived from the shared task collection and does not require another request.
   const visibleTasks = filter === "All" ? tasks : tasks.filter((task) => task.status === filter);
 
+  // Editing state is kept local because it represents an unfinished form, not persisted task data.
   function startEditing(task: Task) {
     setEditingTaskId(task.id);
     setEditTitle(task.title);
     setEditDescription(task.description);
   }
 
+  // Close the editor only after the server confirms the update.
   async function saveTask(taskId: string) {
     if (!editTitle.trim()) return;
     const saved = await updateTask(taskId, {

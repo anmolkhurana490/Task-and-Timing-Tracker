@@ -27,7 +27,7 @@ export const logoutUserAPI = async (): Promise<LogoutResponse> => {
   return response.data;
 };
 
-/** Get current user profile */
+/** Fetches the profile used to hydrate the shared authenticated-user state. */
 export const getCurrentUserAPI = async (): Promise<AuthResponse["user"]> => {
   const response = await api.get("auth/profile");
   return response.data;

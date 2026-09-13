@@ -6,6 +6,7 @@ import { useDashboardViewModel } from "../dashboard.viewmodel";
 import type { Task } from "@/features/tasks/tasks.model";
 import type { TimeLog } from "@/features/timeLogs/timeLogs.model";
 
+/** Converts backend seconds into the compact duration labels used by dashboard cards. */
 function formatDuration(seconds: number) {
   if (seconds <= 0) return "0m";
   const hours = Math.floor(seconds / 3600);
@@ -13,15 +14,18 @@ function formatDuration(seconds: number) {
   return hours ? `${hours}h ${minutes}m` : `${minutes}m`;
 }
 
+/** Keeps chart labels stable across time zones by parsing dashboard dates locally. */
 function formatDay(value: string) {
   return new Date(`${value}T00:00:00`).toLocaleDateString(undefined, { weekday: "short" });
 }
 
+/** Describes how long an outstanding task has gone without an update. */
 function taskAge(task: Task, now: number) {
   const age = Math.floor((now - new Date(task.updatedAt).getTime()) / 86_400_000);
   return age > 0 ? `${age}d waiting` : "Updated today";
 }
 
+/** Small reusable metric surface kept outside the main dashboard composition. */
 function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
     <div className="border border-[#d9ddd4] bg-[#fffefa] p-6">
@@ -32,6 +36,7 @@ function Metric({ label, value, detail }: { label: string; value: string; detail
   );
 }
 
+/** Renders weekly focus values as a lightweight CSS bar chart. */
 function WeeklyChart({ weeklySummary }: { weeklySummary: { date: string; totalTasks: number; totalTimeTracked: number; completedTasks: number }[] }) {
   const maxSeconds = Math.max(...weeklySummary.map((day) => day.totalTimeTracked), 1);
 
@@ -66,6 +71,7 @@ function WeeklyChart({ weeklySummary }: { weeklySummary: { date: string; totalTa
   );
 }
 
+/** Combines stale tasks and carried-over timers into one attention list. */
 function ReminderList({ tasks, activeLogs }: { tasks: Task[]; activeLogs: TimeLog[] }) {
   const [now] = useState(() => Date.now());
   const reminders = tasks.slice(0, 2);
@@ -106,8 +112,10 @@ function ReminderList({ tasks, activeLogs }: { tasks: Task[]; activeLogs: TimeLo
 export default function DashboardView() {
   const { data, weeklySummary, outstanding, error, loading, loadDashboard } = useDashboardViewModel();
 
+  // Dashboard data is loaded together so all summary panels reflect the same visit.
   useEffect(() => { void loadDashboard(); }, [loadDashboard]);
 
+  // These values are derived locally from the daily aggregate for instant rendering.
   const totalTasks = (data?.completedTasks ?? 0) + (data?.notCompletedTasks ?? 0);
   const completion = totalTasks ? Math.round(((data?.completedTasks ?? 0) / totalTasks) * 100) : 0;
   const outstandingTasks = outstanding?.notCompletedTasks ?? [];

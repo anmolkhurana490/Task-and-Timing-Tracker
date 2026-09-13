@@ -13,6 +13,7 @@ export function useAuthViewModel() {
   const [error, setError] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
   const setUser = useAppStore((state) => state.setUser);
+  // Auth errors are local to the current form submission and should not persist globally.
   const clearError = () => { setError("") };
 
   async function register(input: SignupFormValues) {
@@ -20,6 +21,7 @@ export function useAuthViewModel() {
     setSubmitting(true);
 
     try {
+      // Registration is followed by the normal credentials login so both flows establish the same session shape.
       const response = await registerUserAPI(input);
       setUser(response.user);
       return await login({ email: input.email, password: input.password });
@@ -39,6 +41,7 @@ export function useAuthViewModel() {
     setSubmitting(true);
 
     try {
+      // NextAuth owns the browser session; the shared store mirrors its normalized user for client views.
       const result = await signIn("credentials", { ...input, redirect: false });
 
       if (result?.error) {

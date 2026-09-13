@@ -36,16 +36,19 @@ export const useAppStore = create<AppState>((set) => ({
   weeklySummary: [],
   outstanding: null,
 
+  // Auth and DashBoard updates
   setUser: (user) => set({ user }),
   setDashboard: (dashboard) => set({ dashboard }),
   setWeeklySummary: (weeklySummary) => set({ weeklySummary }),
   setOutstanding: (outstanding) => set({ outstanding }),
 
+  // Task mutations update the canonical collection used by all task-facing views.
   setTasks: (tasks) => set({ tasks }),
   addTask: (task) => set((state) => ({ tasks: [task, ...state.tasks] })),
   replaceTask: (task) => set((state) => ({ tasks: state.tasks.map((item) => item.id === task.id ? task : item) })),
   removeTask: (id) => set((state) => ({ tasks: state.tasks.filter((task) => task.id !== id) })),
 
+  // Time-log updates merge server responses so existing fields remain available after stop operations.
   setLogs: (logs) => set({ logs }),
   addLog: (log) => set((state) => ({ logs: [log, ...state.logs], activeLogId: log.id })),
 

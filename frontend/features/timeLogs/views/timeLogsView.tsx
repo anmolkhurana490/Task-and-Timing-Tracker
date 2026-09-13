@@ -3,11 +3,13 @@
 import { useEffect } from "react";
 import { useTimeLogViewModel } from "../timeLogs.viewmodel";
 
+/** Formats seconds for the history summary and individual log rows. */
 function formatDuration(seconds: number | null) {
   if (!seconds) return "Active";
   return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
 }
 
+/** Calculates live elapsed time for active logs and persisted elapsed time for completed logs. */
 function computeDuration(start: string, end: string | null) {
   const startDate = new Date(start).getTime();
   const endDate = new Date(end ?? Date.now()).getTime();
@@ -17,10 +19,12 @@ function computeDuration(start: string, end: string | null) {
 export default function TimeLogsView() {
   const { logs, error, loading, loadLogs } = useTimeLogViewModel();
 
+  // History is fetched when the view mounts; active rows use the same timestamps for live display.
   useEffect(() => {
     void loadLogs();
   }, [loadLogs]);
 
+  // Total time is derived from the current log collection rather than stored separately.
   const totalSeconds = logs.reduce((total, log) => total + computeDuration(log.startedAt, log.endedAt), 0);
 
   return (

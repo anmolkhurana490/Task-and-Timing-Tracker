@@ -11,6 +11,7 @@ export function useTimeLogViewModel() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Logs are global because task cards and the time-log history use the same collection.
   const loadLogs = useCallback(async () => {
     setLoading(true);
     try {
@@ -35,6 +36,7 @@ export function useTimeLogViewModel() {
     }
   }
 
+  // The stop response is partial; the store merges it into the existing log entity.
   async function stopTimer(id: string) {
     try {
       const logData = await stopTimeAPI(id);

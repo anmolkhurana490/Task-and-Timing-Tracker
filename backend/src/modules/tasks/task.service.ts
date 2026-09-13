@@ -1,5 +1,5 @@
 import { SchemaType, type Schema } from "@google/generative-ai";
-import { AuthError } from "../../config/errors.js";
+import { NotFoundError } from "../../utils/errors.js";
 import { generateAIResponse } from "../../utils/genAI.js";
 import { findTask, findTasks, insertTask, removeTask, updateTask } from "./task.dao.js";
 import { type CreateTaskInput, type UpdateTaskInput, TaskSuggestionSchema, type TaskSuggestionResponse } from "./task.validation.js";
@@ -12,7 +12,7 @@ export function getTasksService(userId: string) {
 /** Gets one task or returns a not-found error. */
 export async function getTaskService(id: string, userId: string) {
   const task = await findTask(id, userId);
-  if (!task) throw new AuthError("Task not found", 404);
+  if (!task) throw new NotFoundError("Task not found");
   return task;
 }
 
@@ -24,14 +24,14 @@ export function createTaskService(userId: string, data: CreateTaskInput) {
 /** Updates a task and returns the updated record. */
 export async function updateTaskService(id: string, userId: string, data: UpdateTaskInput) {
   const result = await updateTask(id, userId, data);
-  if (!result) throw new AuthError("Task not found", 404);
+  if (!result) throw new NotFoundError("Task not found");
   return getTaskService(id, userId);
 }
 
 /** Deletes a task owned by the current user. */
 export async function deleteTaskService(id: string, userId: string) {
   const result = await removeTask(id, userId);
-  if (!result) throw new AuthError("Task not found", 404);
+  if (!result) throw new NotFoundError("Task not found");
 }
 
 /** Generates Task Suggestion for user input using GenAI */

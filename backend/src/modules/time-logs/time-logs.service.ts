@@ -1,4 +1,4 @@
-import { AuthError } from "../../config/errors.js";
+import { ConflictError, NotFoundError } from "../../utils/errors.js";
 import { findActiveTimeLog, findActiveTimeLogs, findOwnedTask, findTimeLog, findTimeLogs, insertTimeLog, stopTimeLog } from "./time-logs.dao.js";
 import type { StartTimeInput } from "./time-logs.validation.js";
 
@@ -10,10 +10,10 @@ export function getTimeLogsService(userId: string) {
 /** Starts a timer when the task has no active timer. */
 export async function startTimeService(userId: string, data: StartTimeInput) {
   const ownedTask = await findOwnedTask(data.taskId, userId);
-  if (!ownedTask) throw new AuthError("Task not found", 404);
+  if (!ownedTask) throw new NotFoundError("Task not found");
 
   const timeLog = await findActiveTimeLog(data.taskId);
-  if (timeLog) throw new AuthError("Task is already being tracked", 409);
+  if (timeLog) throw new ConflictError("Task is already being tracked");
 
   return insertTimeLog(userId, data);
 }
@@ -21,12 +21,12 @@ export async function startTimeService(userId: string, data: StartTimeInput) {
 /** Stops an active timer and stores elapsed seconds. */
 export async function stopTimeService(userId: string, id: string) {
   const currentLog = await findTimeLog(id, userId);
-  if (!currentLog || currentLog.endedAt) throw new AuthError("Active time log not found", 404);
+  if (!currentLog || currentLog.endedAt) throw new NotFoundError("Active time log not found");
 
   const endedAt = new Date();
 
   const log = await stopTimeLog(id, userId, endedAt);
-  if (!log) throw new AuthError("Active time log not found", 404);
+  if (!log) throw new NotFoundError("Active time log not found");
 
   return { id, endedAt };
 }

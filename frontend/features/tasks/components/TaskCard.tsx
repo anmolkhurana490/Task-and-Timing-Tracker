@@ -19,6 +19,7 @@ const statusStyles: Record<TaskStatus, string> = {
   COMPLETED: "border-[#b5c9b9] bg-[#e9f1e8] text-[#476257]",
 };
 
+/** Presentational task summary with the timer action delegated to the time-log view-model. */
 const TaskCard = ({ task, activeLog }: TaskCardProps) => {
   const { startTimer, stopTimer } = useTimeLogViewModel();
 

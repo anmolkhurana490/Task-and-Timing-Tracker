@@ -14,6 +14,7 @@ export function useTaskViewModel() {
   const [suggestions, setSuggestions] = useState<TaskSuggestion[]>([]);
   const [error, setError] = useState("");
 
+  // Loading state here covers task-list retrieval; mutation errors remain local to this view-model.
   const loadTasks = useCallback(async () => {
     setLoading(true);
     try {
@@ -42,6 +43,7 @@ export function useTaskViewModel() {
   }
 
   async function suggestTasks(input: string) {
+    // The API requires enough context to produce useful suggestions.
     if (input.trim().length < 10) {
       setError("Describe what you need to do in at least 10 characters.");
       return;
@@ -66,6 +68,7 @@ export function useTaskViewModel() {
     setSuggestions([]);
   }
 
+  // Status changes reuse the task update endpoint so the store receives the server's canonical entity.
   async function updateStatus(id: string, status: TaskStatus) {
     try {
       const taskData = await updateTaskAPI(id, { status });

@@ -14,7 +14,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to handle dynamic headers
+// Attach the current session token at request time because sessions can change without recreating this client.
 api.interceptors.request.use(
   async (config) => {
     // JWT token from session for authenticated requests
@@ -23,7 +23,7 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // add cookies to every request
+    // Cookies are intentionally disabled; authentication uses the bearer token above.
     // config.withCredentials = true;
 
     return config;
@@ -31,7 +31,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Global response interceptor for consistent error handling
+// Convert Axios failures into the backend's small error shape for view-models.
 api.interceptors.response.use(
   response => response, // Pass through successful responses
   error => {

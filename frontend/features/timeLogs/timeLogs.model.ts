@@ -1,3 +1,4 @@
+/** Time-log entity returned by the tracking API. */
 export interface TimeLog {
   id: string;
   taskId: string;
@@ -6,6 +7,7 @@ export interface TimeLog {
   task?: { id: string; title: string };
 }
 
+/** Payload required to start tracking a task. */
 export interface StartTimeInput {
   taskId: string;
 }

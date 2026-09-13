@@ -1,5 +1,6 @@
 import type { ZodType } from "zod";
 
+/** Converts Zod issues into the field-error shape consumed by auth views. */
 export function validateFormData<T>(schema: ZodType<T>, data: T) {
   const validated = schema.safeParse(data);
 

@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { AuthError } from "../config/errors.js";
 import { ACCESS_TOKEN_EXPIRES_IN, SALT_ROUNDS } from "../constants/auth.js";
 
 /** Reads the required signing secret from the process environment. */

@@ -15,6 +15,7 @@ export default function LoginView() {
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof LoginFormValues, string>>>({});
 
+  // Validate locally first so the API receives only a complete login payload.
   const handleSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
 

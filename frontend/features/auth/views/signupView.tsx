@@ -16,6 +16,7 @@ export default function SignupView() {
   const [password, setPassword] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof SignupFormValues, string>>>({});
 
+  // Client validation keeps field-level feedback immediate before registration is attempted.
   const handleSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
 

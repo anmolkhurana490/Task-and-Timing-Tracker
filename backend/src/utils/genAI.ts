@@ -20,6 +20,8 @@ export const generateAIResponse = async (prompt: string, responseSchema: Schema)
 
     return text;
   } catch (err: any) {
+    // Returns an empty array string on any failure
+    // so a flaky AI call never crashes the request
     return "[]";
   }
 }
