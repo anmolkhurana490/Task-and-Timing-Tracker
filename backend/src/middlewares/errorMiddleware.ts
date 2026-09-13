@@ -1,8 +1,9 @@
 import { type ErrorRequestHandler } from "express";
 import { AuthError, ValidationError } from "../config/errors.js";
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
+import type { CustomRequest } from "../types/express.js";
 
-const errorHandler: ErrorRequestHandler = (error, _req: Request, res: Response, _next: NextFunction) => {
+const errorHandler: ErrorRequestHandler = (error, _req: CustomRequest, res: Response, _next: NextFunction) => {
   if (error instanceof AuthError) {
     res.status(error.statusCode).json({ error: error.message });
     return;

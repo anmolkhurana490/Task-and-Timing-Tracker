@@ -1,8 +1,9 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
+import type { CustomRequest } from "../../types/express.js";
 import { getActiveLogsService, getTimeLogsService, startTimeService, stopTimeService } from "./time.service.js";
 
 /** Lists the authenticated user's time logs. */
-export async function getTimeLogsController(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getTimeLogsController(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
   try {
     const data = await getTimeLogsService(req.userId as string);
     res.json(data);
@@ -12,7 +13,7 @@ export async function getTimeLogsController(req: Request, res: Response, next: N
 }
 
 /** Starts tracking a task. */
-export async function startTimeController(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function startTimeController(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
   try {
     const data = await startTimeService(req.userId as string, req.body);
     res.status(201).json(data);
@@ -22,7 +23,7 @@ export async function startTimeController(req: Request, res: Response, next: Nex
 }
 
 /** Stops a user's active time log. */
-export async function stopTimeController(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function stopTimeController(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {
   try {
     const data = await stopTimeService(req.userId as string, req.params.id as string);
     res.json(data);
@@ -32,7 +33,7 @@ export async function stopTimeController(req: Request, res: Response, next: Next
 }
 
 /** Gets active logs of user's tasks. */
-export async function getActiveLogsController(req: Request, res: Response, next: NextFunction) {
+export async function getActiveLogsController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const activeLog = await getActiveLogsService(req.userId as string);
     res.json(activeLog);

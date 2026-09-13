@@ -1,10 +1,7 @@
-declare global {
-  namespace Express {
-    interface Request {
-      userId?: string;
-      valQuery?: any
-    }
-  }
-}
+import type { Request } from "express";
 
-export { };
+/** Request shape after Auth / Validation Middleware */
+export interface CustomRequest extends Request {
+  userId?: string;
+  valQuery?: any;
+}

@@ -4,9 +4,10 @@ import { verifyAuthToken } from "../utils/auth.js";
 import { getCache } from "../services/cacheService.js";
 import { generateSessionCacheKey } from "../constants/auth.js";
 import type { NextFunction, Request, Response } from "express";
+import type { CustomRequest } from "../types/express.js";
 
 /** Adds the authenticated user's id to the request from a bearer token or cookie. */
-export const authMiddleware: RequestHandler = async (req: Request, _res: Response, next: NextFunction) => {
+export const authMiddleware: RequestHandler = async (req: CustomRequest, _res: Response, next: NextFunction) => {
   const authorization = req.header("Authorization");
   const bearerToken = authorization?.startsWith("Bearer ") ? authorization.slice(7) : undefined;
 

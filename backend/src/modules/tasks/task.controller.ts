@@ -1,9 +1,10 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
+import type { CustomRequest } from "../../types/express.js";
 import { createTaskService, deleteTaskService, generateTaskSuggestions, getTaskService, getTasksService, updateTaskService } from "./task.service.js";
 import type { SuggestionQueryInput } from "./task.validation.js";
 
 /** Returns all tasks owned by the authenticated user. */
-export async function getTasksController(req: Request, res: Response, next: NextFunction) {
+export async function getTasksController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const data = await getTasksService(req.userId as string);
     res.json(data);
@@ -13,7 +14,7 @@ export async function getTasksController(req: Request, res: Response, next: Next
 }
 
 /** Returns one owned task. */
-export async function getTaskController(req: Request, res: Response, next: NextFunction) {
+export async function getTaskController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const data = await getTaskService(req.params.id as string, req.userId as string);
     res.json(data);
@@ -23,7 +24,7 @@ export async function getTaskController(req: Request, res: Response, next: NextF
 }
 
 /** Creates a task for the authenticated user. */
-export async function createTaskController(req: Request, res: Response, next: NextFunction) {
+export async function createTaskController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const data = await createTaskService(req.userId as string, req.body);
     res.status(201).json(data);
@@ -33,7 +34,7 @@ export async function createTaskController(req: Request, res: Response, next: Ne
 }
 
 /** Updates one owned task. */
-export async function updateTaskController(req: Request, res: Response, next: NextFunction) {
+export async function updateTaskController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const data = await updateTaskService(req.params.id as string, req.userId as string, req.body);
     res.json(data);
@@ -43,7 +44,7 @@ export async function updateTaskController(req: Request, res: Response, next: Ne
 }
 
 /** Deletes one owned task. */
-export async function deleteTaskController(req: Request, res: Response, next: NextFunction) {
+export async function deleteTaskController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     await deleteTaskService(req.params.id as string, req.userId as string);
     res.status(204).send();
@@ -53,7 +54,7 @@ export async function deleteTaskController(req: Request, res: Response, next: Ne
 }
 
 /** Get AI Generated Task Suggestion */
-export async function getTaskSuggestionController(req: Request, res: Response, next: NextFunction) {
+export async function getTaskSuggestionController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const query = req.valQuery as SuggestionQueryInput;
     const data = await generateTaskSuggestions(query.user_input);
