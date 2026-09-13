@@ -37,7 +37,7 @@ export function insertTimeLog(userId: string, taskId: string) {
   return prisma.timeLog.create({ data: { taskId, userId } });
 }
 
-/** Stops a log only when it belongs to the user. */
+/** Stops a time log. */
 export function stopTimeLog(id: string, endedAt: Date) {
   return prisma.timeLog.update({ where: { id, endedAt: null }, data: { endedAt } });
 }

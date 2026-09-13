@@ -44,14 +44,16 @@ export async function getDashboardService(userId: string) {
 
 /** Calculates the previous Monday-to-Sunday productivity summary. */
 export async function getWeeklySummaryService(userId: string) {
-  const currentWeekStart = new Date();
-  currentWeekStart.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  const daysSinceMonday = currentWeekStart.getDay();
-  currentWeekStart.setDate(currentWeekStart.getDate() + daysSinceMonday + 2);
+  const daysSinceMonday = (today.getDay() + 6) % 7; // Monday=0 ... Sunday=6
+
+  const currentWeekStart = new Date(today);
+  currentWeekStart.setDate(today.getDate() - daysSinceMonday);
 
   const lastWeekStart = new Date(currentWeekStart);
-  lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+  lastWeekStart.setDate(currentWeekStart.getDate() - 7);
 
   const weeklyTasks = await findDashboardData(userId, lastWeekStart, currentWeekStart);
 
