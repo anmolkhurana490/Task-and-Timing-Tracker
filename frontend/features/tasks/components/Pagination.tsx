@@ -8,15 +8,15 @@ const Pagination = ({ values }: { values: PaginationValues }) => {
   const { page: currPage, totalPages, limit } = values;
 
   const onLimitChange = (newLimit: number) => {
-    router.push(`?page=${currPage}&limit=${newLimit}`);
+    window.location.href = `tasks?page=${currPage}&limit=${newLimit}`;
   }
 
   const onPrevious = () => {
-    if (currPage > 1) router.push(`?page=${currPage - 1}&limit=${limit}`);
+    if (currPage > 1) window.location.href = `tasks?page=${currPage - 1}&limit=${limit}`;
   }
 
   const onNext = () => {
-    if (currPage < totalPages) router.push(`?page=${currPage + 1}&limit=${limit}`);
+    if (currPage < totalPages) window.location.href = `tasks?page=${currPage + 1}&limit=${limit}`;
   }
 
   return (
