@@ -6,7 +6,6 @@ dotenv.config({ quiet: true });
 if (!process.env.REDIS_URL) {
   throw new Error("REDIS_URL is not configured");
 }
-else console.log(process.env.REDIS_URL.slice(0,20));
 
 // Connects to REDIS_URL
 const redis = new RedisPackage.Redis(process.env.REDIS_URL);

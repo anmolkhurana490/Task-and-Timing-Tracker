@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && npx prisma migrate deploy && tsc",
     "dev": "tsx watch src/server.ts",
-    "start": "npx prisma migrate deploy && node dist/src/server.js",
+    "start": "node dist/src/server.js",
     "postinstall": "prisma skills sync || exit 0"
   },
   "keywords": [],
