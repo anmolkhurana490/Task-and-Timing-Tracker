@@ -2,8 +2,12 @@
 
 A full-stack productivity app for managing tasks and tracking time spent on them in real time. Create tasks (with optional AI-generated suggestions), start/stop a timer per task, and get a daily summary of what you worked on — how much time you tracked, and what's done vs. still pending.
 
-- **Live App:** https://task-timer-tracker-psi-rust-10.vercel.app
-- **Backend API:** https://task-timer-tracker-backend-rho-89.vercel.app
+## ✅ Deliverables
+
+- **Live App Link:** https://task-timer-tracker-psi-rust-10.vercel.app
+- **Test credentials** (if needed):
+  - Email: `anmolkhurana123@gmail.com`
+  - Password: `anmol123`
 
 ---
 
