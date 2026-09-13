@@ -1,5 +1,5 @@
-import express, { type ErrorRequestHandler } from "express";
-import { AuthError, ValidationError } from "../config/errors";
+import { type ErrorRequestHandler } from "express";
+import { AuthError, ValidationError } from "../config/errors.js";
 import type { NextFunction, Request, Response } from "express";
 
 const errorHandler: ErrorRequestHandler = (error, _req: Request, res: Response, _next: NextFunction) => {

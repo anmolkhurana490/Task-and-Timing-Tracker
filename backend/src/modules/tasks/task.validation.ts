@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TaskStatus } from "../../../generated/prisma/enums";
+import { TaskStatus } from "../../../generated/prisma/enums.js";
 
 /** Validates fields accepted when creating a task. */
 export const createTaskSchema = z.object({

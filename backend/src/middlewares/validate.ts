@@ -1,7 +1,7 @@
-import type { RequestHandler } from "express";
-import type { z } from "zod";
 import type { NextFunction, Request, Response } from "express";
-import { ValidationError } from "../config/errors";
+import type { RequestHandler } from "express";
+import { ValidationError } from "../config/errors.js";
+import type { z } from "zod";
 
 /** Validates a request body, query or param and replaces it with the parsed, normalized value. */
 export function validate(schema: z.ZodType, source: "body" | "query" | "params" = "body"): RequestHandler {
