@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAppStore } from "../stores/useAppStore";
 import { getAuthUser } from "@/lib/authSession";
 import { useEffect } from "react";
-import { useAuthViewModel } from "@/features/auth/viewmodels/useAuthViewModel";
+import { useAuthViewModel } from "@/features/auth/auth.viewmodel";
 import { useRouter } from "next/navigation";
 
 export function Navbar() {

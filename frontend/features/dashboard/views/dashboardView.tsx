@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useDashboardViewModel } from "../viewmodels/useDashboardViewModel";
-import type { Task } from "../../tasks/models/tasks";
-import type { TimeLog } from "../../timeLogs/models/timeLogs";
+import { useDashboardViewModel } from "../dashboard.viewmodel";
+import type { Task } from "@/features/tasks/tasks.model";
+import type { TimeLog } from "@/features/timeLogs/timeLogs.model";
 
 function formatDuration(seconds: number) {
   if (seconds <= 0) return "0m";

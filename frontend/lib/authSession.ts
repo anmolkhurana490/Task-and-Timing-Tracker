@@ -1,5 +1,5 @@
 import { getSession } from "next-auth/react";
-import type { AuthUser } from "../features/auth/models/auth";
+import type { AuthUser } from "@/features/auth/auth.model";
 
 export interface NextAuthUser extends Partial<AuthUser> {
   accessToken?: string;

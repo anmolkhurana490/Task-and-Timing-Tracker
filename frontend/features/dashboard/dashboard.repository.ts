@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { DailyDashboardData, OutstandingData } from "./types";
+import type { DailyDashboardData, OutstandingData } from "./dashboard.types";
 
 export async function getDashboardAPI(): Promise<DailyDashboardData> {
   const response = await api.get<DailyDashboardData>("dashboard");

@@ -1,1 +1,1 @@
-export { default } from "../../features/tasks/views/taskView";
+export { default } from "@/features/tasks/views/TaskView";

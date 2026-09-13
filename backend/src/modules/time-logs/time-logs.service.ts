@@ -1,6 +1,6 @@
 import { AuthError } from "../../config/errors.js";
-import { findActiveTimeLog, findActiveTimeLogs, findOwnedTask, findTimeLog, findTimeLogs, insertTimeLog, stopTimeLog } from "./time.dao.js";
-import type { StartTimeInput } from "./time.validation.js";
+import { findActiveTimeLog, findActiveTimeLogs, findOwnedTask, findTimeLog, findTimeLogs, insertTimeLog, stopTimeLog } from "./time-logs.dao.js";
+import type { StartTimeInput } from "./time-logs.validation.js";
 
 /** Returns the current user's time logs. */
 export function getTimeLogsService(userId: string) {

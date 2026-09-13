@@ -1,4 +1,4 @@
-import type { AuthUser } from "../models/auth";
+import type { AuthUser } from "./auth.model";
 
 /** Response types for authentication API endpoints */
 export interface AuthResponse {

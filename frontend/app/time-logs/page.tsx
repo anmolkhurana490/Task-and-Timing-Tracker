@@ -1,1 +1,1 @@
-export { default } from "../../features/timeLogs/views/timeLogsView";
+export { default } from "@/features/timeLogs/views/TimeLogsView";

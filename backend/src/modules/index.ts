@@ -1,6 +1,6 @@
 import { authRouter } from "./auth/auth.routes.js";
 import { taskRouter } from "./tasks/task.routes.js";
-import { timeRouter } from "./time/time.routes.js";
+import { timeRouter } from "./time-logs/time-logs.routes.js";
 import { dashboardRouter } from "./dashboard/dashboard.routes.js";
 import { Router } from "express";
 

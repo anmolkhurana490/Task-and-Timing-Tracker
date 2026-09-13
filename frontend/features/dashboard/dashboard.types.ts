@@ -1,5 +1,5 @@
-import type { Task } from "../tasks/models/tasks";
-import type { TimeLog } from "../timeLogs/models/timeLogs";
+import type { Task } from "@/features/tasks/tasks.model";
+import type { TimeLog } from "@/features/timeLogs/timeLogs.model";
 
 export interface DailyDashboardData {
   date: string;

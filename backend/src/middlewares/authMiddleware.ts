@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { AuthError } from "../config/errors.js";
 import { verifyAuthToken } from "../utils/auth.js";
-import { getCache } from "../services/cacheService.js";
+import { getCache } from "../utils/cache.js";
 import { generateSessionCacheKey } from "../constants/auth.js";
 import type { NextFunction, Request, Response } from "express";
 import type { CustomRequest } from "../types/express.js";

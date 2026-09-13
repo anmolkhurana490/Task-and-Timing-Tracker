@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTaskViewModel } from "../viewmodels/useTaskViewModel";
-import type { Task, TaskStatus } from "../models/tasks";
-import { useTimeLogViewModel } from "../../timeLogs/viewmodels/useTimeLogViewModel";
+import { useTaskViewModel } from "../task.viewmodel";
+import type { Task, TaskStatus } from "../tasks.model";
+import { useTimeLogViewModel } from "@/features/timeLogs/timeLogs.viewmodel";
 import TaskCard, { statusLabels } from "../components/TaskCard";
 
 export default function TasksView() {

@@ -1,12 +1,12 @@
 "use client";
 
-import { registerUserAPI, logoutUserAPI } from "../repository";
-import type { AuthApiError } from "../types/api";
+import { registerUserAPI, logoutUserAPI } from "./auth.repository";
+import type { AuthApiError } from "./auth.types";
 import { signIn, signOut } from "next-auth/react";
-import type { SignupFormValues, LoginFormValues } from "../validation";
+import type { SignupFormValues, LoginFormValues } from "./auth.validation";
 import { useState } from "react";
-import { getAuthUser } from "../../../lib/authSession";
-import { useAppStore } from "../../../shared/stores/useAppStore";
+import { getAuthUser } from "@/lib/authSession";
+import { useAppStore } from "@/shared/stores/useAppStore";
 
 /** Coordinates auth form submission, session persistence. */
 export function useAuthViewModel() {
@@ -73,7 +73,7 @@ export function useAuthViewModel() {
       console.warn("Error during logout:", error);
       await signOut(); // Ensure the user is signed out even if the API call fails
       setUser(null);
-      
+
       return { success: true }; // allow sign-out even if the API call fails
     }
     finally {

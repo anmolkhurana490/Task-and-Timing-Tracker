@@ -1,7 +1,7 @@
 import NextAuth, { CredentialsSignin, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { loginUserAPI } from "@/features/auth/repository";
-import type { AuthApiError } from "@/features/auth/types/api";
+import { loginUserAPI } from "@/features/auth/auth.repository";
+import type { AuthApiError } from "@/features/auth/auth.types";
 
 export const authOptions: NextAuthConfig = {
   providers: [

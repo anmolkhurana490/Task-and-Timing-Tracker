@@ -2,7 +2,7 @@ import { createUser, findUserByEmail, findUserById, type AuthUser } from "./auth
 import { AuthError } from "../../config/errors.js";
 import { comparePassword, hashPassword, signAuthToken } from "../../utils/auth.js";
 import { type LoginInput, type RegisterInput } from "./auth.validation.js";
-import { setCache, delCache } from "../../services/cacheService.js";
+import { setCache, delCache } from "../../utils/cache.js";
 import { AUTH_REDIS_EXPIRY_SECONDS, generateSessionCacheKey } from "../../constants/auth.js";
 
 /** Creates the public account response and JWT without exposing password data. */

@@ -2,9 +2,9 @@
 
 import { useCallback } from "react";
 import { useState } from "react";
-import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, updateTaskAPI } from "../repository";
-import { useAppStore } from "../../../shared/stores/useAppStore";
-import type { CreateTaskInput, TaskStatus, TaskSuggestion, UpdateTaskInput } from "../models/tasks";
+import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, updateTaskAPI } from "./tasks.repository";
+import { useAppStore } from "@/shared/stores/useAppStore";
+import type { CreateTaskInput, TaskStatus, TaskSuggestion, UpdateTaskInput } from "./tasks.model";
 
 export function useTaskViewModel() {
   const { tasks, setTasks, addTask, replaceTask, removeTask } = useAppStore();

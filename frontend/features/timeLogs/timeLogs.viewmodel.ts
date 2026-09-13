@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 import { useState } from "react";
-import { useAppStore } from "../../../shared/stores/useAppStore";
-import { getTimeLogsAPI, startTimeAPI, stopTimeAPI } from "../repository";
+import { useAppStore } from "@/shared/stores/useAppStore";
+import { getTimeLogsAPI, startTimeAPI, stopTimeAPI } from "./timeLogs.repository";
 
 export function useTimeLogViewModel() {
   const { logs, setLogs, addLog, updateLog } = useAppStore();

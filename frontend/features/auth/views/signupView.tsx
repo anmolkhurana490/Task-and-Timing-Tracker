@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useAuthViewModel } from "../viewmodels/useAuthViewModel";
+import { useAuthViewModel } from "../auth.viewmodel";
 import { useRouter } from "next/navigation";
-import { signupSchema, type SignupFormValues } from "../validation";
-import { validateFormData } from "../../../lib/validateUtils";
+import { signupSchema, type SignupFormValues } from "../auth.validation";
+import { validateFormData } from "@/lib/validation";
 
 export default function SignupView() {
   const { error, isSubmitting, register } = useAuthViewModel();

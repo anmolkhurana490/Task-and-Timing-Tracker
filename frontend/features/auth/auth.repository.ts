@@ -7,7 +7,7 @@ import type {
   LogoutResponse,
   LoginRequest,
   RegisterRequest,
-} from "./types/api";
+} from "./auth.types";
 
 /** Register new user */
 export const registerUserAPI = async (userData: RegisterRequest): Promise<AuthResponse> => {

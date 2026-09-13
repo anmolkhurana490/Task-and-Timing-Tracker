@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 import { useState } from "react";
-import { getDashboardAPI, getOutstandingAPI, getWeeklySummaryAPI } from "../repository";
-import { useAppStore } from "../../../shared/stores/useAppStore";
+import { getDashboardAPI, getOutstandingAPI, getWeeklySummaryAPI } from "./dashboard.repository";
+import { useAppStore } from "@/shared/stores/useAppStore";
 
 export function useDashboardViewModel() {
   const {

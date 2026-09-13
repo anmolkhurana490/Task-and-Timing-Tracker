@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import type { AuthUser } from "../../features/auth/models/auth";
-import type { Task } from "../../features/tasks/models/tasks";
-import { TimeLog } from "../../features/timeLogs/models/timeLogs";
-import type { DailyDashboardData, OutstandingData } from "../../features/dashboard/types";
+import type { AuthUser } from "@/features/auth/auth.model";
+import type { Task } from "@/features/tasks/tasks.model";
+import { TimeLog } from "@/features/timeLogs/timeLogs.model";
+import type { DailyDashboardData, OutstandingData } from "@/features/dashboard/dashboard.types";
 
 interface AppState {
   user: AuthUser | null;

@@ -1,5 +1,5 @@
 import { TaskStatus } from "../../../generated/prisma/enums.js";
-import { findDashboardData, findOutstandingDashboardData, type DashboardTask } from "../time/time.dao.js";
+import { findDashboardData, findOutstandingDashboardData, type DashboardTask } from "../time-logs/time-logs.dao.js";
 
 function computeDayTaskData(tasks: DashboardTask[], start: Date, end: Date) {
   let totalTasks = 0, totalTimeTracked = 0;

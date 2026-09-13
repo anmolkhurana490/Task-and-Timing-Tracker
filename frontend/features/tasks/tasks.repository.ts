@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { CreateTaskInput, Task, TaskSuggestion, UpdateTaskInput } from "./models/tasks";
+import type { CreateTaskInput, Task, TaskSuggestion, UpdateTaskInput } from "./tasks.model";
 
 export async function getTasksAPI(): Promise<Task[]> {
   const response = await api.get<Task[]>("tasks");

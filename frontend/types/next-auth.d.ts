@@ -1,4 +1,4 @@
-import type { AuthUser } from "@/features/auth/models/auth";
+import type { AuthUser } from "@/features/auth/auth.model";
 
 // Keep the backend user and JWT available through NextAuth's typed session.
 declare module "next-auth" {

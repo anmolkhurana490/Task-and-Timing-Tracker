@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTimeLogViewModel } from "../viewmodels/useTimeLogViewModel";
+import { useTimeLogViewModel } from "../timeLogs.viewmodel";
 
 function formatDuration(seconds: number | null) {
   if (!seconds) return "Active";

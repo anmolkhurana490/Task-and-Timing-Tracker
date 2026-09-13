@@ -1,7 +1,7 @@
 import type { Prisma } from "../../../generated/prisma/browser.js";
 import { TaskStatus } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
-import type { StartTimeInput } from "./time.validation.js";
+import type { StartTimeInput } from "./time-logs.validation.js";
 
 /** Lists time logs owned by a user. */
 export function findTimeLogs(userId: string) {

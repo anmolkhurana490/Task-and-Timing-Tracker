@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express";
 import type { CustomRequest } from "../../types/express.js";
-import { getActiveLogsService, getTimeLogsService, startTimeService, stopTimeService } from "./time.service.js";
+import { getActiveLogsService, getTimeLogsService, startTimeService, stopTimeService } from "./time-logs.service.js";
 
 /** Lists the authenticated user's time logs. */
 export async function getTimeLogsController(req: CustomRequest, res: Response, next: NextFunction): Promise<void> {

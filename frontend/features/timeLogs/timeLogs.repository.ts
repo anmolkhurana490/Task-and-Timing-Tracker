@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { StartTimeInput, TimeLog } from "./models/timeLogs";
+import type { StartTimeInput, TimeLog } from "./timeLogs.model";
 
 export async function getTimeLogsAPI(): Promise<TimeLog[]> {
   const response = await api.get<TimeLog[]>("time-logs");
