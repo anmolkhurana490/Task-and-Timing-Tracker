@@ -2,7 +2,7 @@
 // Configures HTTP client with base URL, authentication, and error handling
 
 import axios from "axios";
-import { API_BASE_URL } from "@/config/constants/apis";
+import { API_BASE_URL } from "@/config/appConstants";
 import { getAuthToken } from "./authSession";
 
 // Create axios instance with default configuration

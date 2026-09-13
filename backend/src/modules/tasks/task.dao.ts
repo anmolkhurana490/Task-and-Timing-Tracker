@@ -32,16 +32,16 @@ export function insertTask(userId: string, data: CreateTaskInput) {
 }
 
 /** Updates a task only when it belongs to the user. */
-export function updateTask(id: string, userId: string, data: UpdateTaskInput) {
+export function updateTask(id: string, data: UpdateTaskInput) {
   const taskData = {
     ...(data.title !== undefined ? { title: data.title } : {}),
     ...(data.description !== undefined ? { description: data.description } : {}),
     ...(data.status !== undefined ? { status: data.status } : {}),
   };
-  return prisma.task.update({ where: { id, userId }, data: taskData });
+  return prisma.task.update({ where: { id }, data: taskData });
 }
 
 /** Deletes a task only when it belongs to the user. */
-export function removeTask(id: string, userId: string) {
-  return prisma.task.delete({ where: { id, userId } });
+export function removeTask(id: string) {
+  return prisma.task.delete({ where: { id } });
 }

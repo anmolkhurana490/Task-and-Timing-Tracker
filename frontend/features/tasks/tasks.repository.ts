@@ -1,9 +1,9 @@
 import api from "@/lib/api";
-import type { CreateTaskInput, GetTasksResponse, Task, TaskSuggestion, TimeLog, UpdateTaskInput } from "./tasks.model";
+import type { CreateTaskInput, GetTasksResponse, PaginationQueryInput, Task, TaskSuggestion, TimeLog, UpdateTaskInput } from "./tasks.model";
 
 /** Reads the authenticated user's tasks in backend order. */
-export async function getTasksAPI(): Promise<GetTasksResponse> {
-  const response = await api.get<GetTasksResponse>("tasks");
+export async function getTasksAPI(pageQuery: PaginationQueryInput): Promise<GetTasksResponse> {
+  const response = await api.get<GetTasksResponse>(`tasks?page=${pageQuery.page}&limit=${pageQuery.limit}`);
   return response.data;
 }
 

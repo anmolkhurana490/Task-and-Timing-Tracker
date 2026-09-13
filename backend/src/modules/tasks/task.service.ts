@@ -31,15 +31,19 @@ export function createTaskService(userId: string, data: CreateTaskInput) {
 
 /** Updates a task and returns the updated record. */
 export async function updateTaskService(id: string, userId: string, data: UpdateTaskInput) {
-  const result = await updateTask(id, userId, data);
-  if (!result) throw new NotFoundError("Task not found");
-  return getTaskService(id, userId);
+  const existing = await findOwnedTask(id, userId);
+  if (!existing) throw new NotFoundError("Task not found");
+
+  const result = await updateTask(id, data);
+  return result;
 }
 
 /** Deletes a task owned by the current user. */
 export async function deleteTaskService(id: string, userId: string) {
-  const result = await removeTask(id, userId);
-  if (!result) throw new NotFoundError("Task not found");
+  const existing = await findOwnedTask(id, userId);
+  if (!existing) throw new NotFoundError("Task not found");
+
+  await removeTask(id);
 }
 
 /** Generates Task Suggestion for user input using GenAI */

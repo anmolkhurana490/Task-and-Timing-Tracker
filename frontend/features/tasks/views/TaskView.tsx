@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useTaskViewModel } from "../tasks.viewmodel";
-import type { Task, TaskStatus } from "../tasks.model";
+import type { PaginationQueryInput, Task, TaskStatus } from "../tasks.model";
 import TaskCard, { statusLabels } from "../components/TaskCard";
+import Pagination from "../components/Pagination";
+import { useSearchParams } from "next/navigation";
 
 export default function TasksView() {
-  const { tasks, error, loading, suggesting, suggestions, loadTasks, createTask, suggestTasks, clearSuggestions, updateStatus, updateTask, deleteTask } = useTaskViewModel();
+  const { tasks, pagination, error, loading, suggesting, suggestions, loadTasks, createTask, suggestTasks, clearSuggestions, updateStatus, updateTask, deleteTask } = useTaskViewModel();
 
+  const searchParams = useSearchParams();
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState<"All" | TaskStatus>("All");
 
@@ -17,8 +20,13 @@ export default function TasksView() {
 
   // Initial task and log loads keep task cards and timer controls in sync.
   useEffect(() => {
-    loadTasks();
-  }, [loadTasks]);
+    const paramsObj = Object.fromEntries(searchParams.entries());
+    const pageQuery = {
+      page: Number(paramsObj.page) || 1,
+      limit: Number(paramsObj.limit) || 10
+    }
+    loadTasks(pageQuery);
+  }, [loadTasks, searchParams]);
 
   // Direct task creation clears the suggestion context because the input has been consumed.
   function addTask(event: React.SubmitEvent) {
@@ -201,6 +209,8 @@ export default function TasksView() {
           ))}
         </div>
       )}
+
+      {pagination && pagination.totalPages > 1 && <Pagination values={pagination} />}
     </main>
   );
 }

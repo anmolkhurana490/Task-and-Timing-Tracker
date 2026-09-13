@@ -4,22 +4,22 @@ import { useCallback } from "react";
 import { useState } from "react";
 import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, startTaskTimerAPI, stopTaskTimerAPI, updateTaskAPI } from "./tasks.repository";
 import { useAppStore } from "@/shared/stores/useAppStore";
-import type { CreateTaskInput, TaskStatus, TaskSuggestion, UpdateTaskInput } from "./tasks.model";
+import type { CreateTaskInput, PaginationQueryInput, PaginationValues, TaskStatus, TaskSuggestion, UpdateTaskInput } from "./tasks.model";
 
 export function useTaskViewModel() {
   const { tasks, setTasks, addTask, replaceTask, removeTask, addTaskLog, stopTaskLog } = useAppStore();
 
-  const [pagination, setPagination] = useState({});
+  const [pagination, setPagination] = useState<PaginationValues | null>(null);
   const [loading, setLoading] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<TaskSuggestion[]>([]);
   const [error, setError] = useState("");
 
   // Loading state here covers task-list retrieval; mutation errors remain local to this view-model.
-  const loadTasks = useCallback(async () => {
+  const loadTasks = useCallback(async (pageQuery: PaginationQueryInput) => {
     setLoading(true);
     try {
-      const tasksData = await getTasksAPI();
+      const tasksData = await getTasksAPI(pageQuery);
       setTasks(tasksData.tasks);
       setPagination(tasksData.pagination);
     }
@@ -123,6 +123,7 @@ export function useTaskViewModel() {
 
   return {
     tasks,
+    pagination, setPagination,
     loading,
     suggesting,
     suggestions,

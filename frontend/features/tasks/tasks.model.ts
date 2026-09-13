@@ -39,13 +39,22 @@ export interface UpdateTaskInput {
   status?: TaskStatus;
 }
 
+/** Pagination Query Input - required for get API */
+export interface PaginationQueryInput {
+  limit: number;
+  page: number;
+};
+
+/** Pagination Values - required for pages like Tasks Page */
+export interface PaginationValues {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+};
+
 /** Get Tasks API Response having task array and pagination data */
 export interface GetTasksResponse {
-  pagination: {
-    limit: number;
-    page: number;
-    total: number;
-    totakPages: number;
-  };
+  pagination: PaginationValues;
   tasks: Task[];
 }
