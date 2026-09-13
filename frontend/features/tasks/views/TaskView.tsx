@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTaskViewModel } from "../task.viewmodel";
+import { useTaskViewModel } from "../tasks.viewmodel";
 import type { Task, TaskStatus } from "../tasks.model";
-import { useTimeLogViewModel } from "@/features/timeLogs/timeLogs.viewmodel";
 import TaskCard, { statusLabels } from "../components/TaskCard";
 
 export default function TasksView() {
   const { tasks, error, loading, suggesting, suggestions, loadTasks, createTask, suggestTasks, clearSuggestions, updateStatus, updateTask, deleteTask } = useTaskViewModel();
-  const { logs: taskLogs, loadLogs } = useTimeLogViewModel();
 
   const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState<"All" | TaskStatus>("All");
@@ -20,11 +18,10 @@ export default function TasksView() {
   // Initial task and log loads keep task cards and timer controls in sync.
   useEffect(() => {
     loadTasks();
-    loadLogs();
-  }, [loadTasks, loadLogs]);
+  }, [loadTasks]);
 
   // Direct task creation clears the suggestion context because the input has been consumed.
-  function addTask(event: React.FormEvent<HTMLFormElement>) {
+  function addTask(event: React.SubmitEvent) {
     event.preventDefault();
     if (!newTask.trim()) return;
     void createTask({ title: newTask.trim() });
@@ -165,7 +162,7 @@ export default function TasksView() {
               key={task.id}
               className="border border-[#d9ddd4] bg-[#fffefa] p-5 sm:p-6"
             >
-              {editingTaskId == task.id ? (
+              {editingTaskId === task.id ? (
                 <div className="grid gap-3">
                   <input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} className="border border-[#d9ddd4] bg-transparent px-3 py-2 text-lg outline-none focus:border-[#476257]" aria-label="Edit task name" />
 
@@ -177,7 +174,7 @@ export default function TasksView() {
                   </div>
                 </div>
               ) : (
-                <TaskCard task={task} activeLog={taskLogs.find(log => log.endedAt === null && log.taskId === task.id)} />
+                <TaskCard task={task} />
               )}
 
               <div className="mt-5 flex flex-col gap-3 border-t border-[#d9ddd4] pt-4 text-xs text-[#6d7973] sm:flex-row sm:items-center sm:justify-between">

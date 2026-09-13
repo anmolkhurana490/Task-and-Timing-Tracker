@@ -1,5 +1,5 @@
 import { TaskStatus } from "../../../generated/prisma/enums.js";
-import { findDashboardData, findOutstandingDashboardData, type DashboardTask } from "../time-logs/time-logs.dao.js";
+import { findDashboardData, findOutstandingDashboardData, type DashboardTask } from "../tasks/time-logs.dao.js";
 
 function computeDayTaskData(tasks: DashboardTask[], start: Date, end: Date) {
   let totalTasks = 0, totalTimeTracked = 0;
@@ -72,6 +72,6 @@ export async function getWeeklySummaryService(userId: string) {
 
 /** Returns unfinished tasks and active timers left running from earlier dates. */
 export async function getOutstandingService(userId: string) {
-  const [notCompletedTasks, activeTimeLogs] = await findOutstandingDashboardData(userId);
-  return { notCompletedTasks, activeTimeLogs };
+  const [notCompletedTasks, activeLogTasks] = await findOutstandingDashboardData(userId);
+  return { notCompletedTasks, activeLogTasks };
 }

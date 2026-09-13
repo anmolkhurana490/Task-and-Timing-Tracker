@@ -39,7 +39,6 @@ export function Navbar() {
           <>
             <Link href="/dashboard">Overview</Link>
             <Link href="/tasks">Tasks</Link>
-            <Link href="/time-logs">Time logs</Link>
             <form action={handleSignOut}>
               <button className="cursor-pointer border-0 bg-transparent p-0 font-inherit font-bold text-inherit" type="submit">Sign out</button>
             </form>

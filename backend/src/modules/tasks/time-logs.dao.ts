@@ -1,7 +1,6 @@
 import type { Prisma } from "../../../generated/prisma/browser.js";
 import { TaskStatus } from "../../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
-import type { StartTimeInput } from "./time-logs.validation.js";
 
 /** Lists time logs owned by a user. */
 export function findTimeLogs(userId: string) {
@@ -18,6 +17,11 @@ export function findActiveTimeLog(taskId: string) {
   return prisma.timeLog.findFirst({ where: { taskId, endedAt: null } });
 }
 
+/** Finds an active timer for a task. */
+export function findUserActiveTimeLog(taskId: string, userId: string) {
+  return prisma.timeLog.findFirst({ where: { taskId, userId, endedAt: null } });
+}
+
 /** Confirms that a task belongs to the user starting the timer. */
 export function findOwnedTask(taskId: string, userId: string) {
   return prisma.task.findFirst({ where: { id: taskId, userId }, select: { id: true } });
@@ -29,13 +33,13 @@ export function findTimeLog(id: string, userId: string) {
 }
 
 /** Creates a timer only for a task owned by the same user. */
-export function insertTimeLog(userId: string, data: StartTimeInput) {
-  return prisma.timeLog.create({ data: { taskId: data.taskId, userId } });
+export function insertTimeLog(userId: string, taskId: string) {
+  return prisma.timeLog.create({ data: { taskId, userId } });
 }
 
 /** Stops a log only when it belongs to the user. */
-export function stopTimeLog(id: string, userId: string, endedAt: Date) {
-  return prisma.timeLog.update({ where: { id, userId, endedAt: null }, data: { endedAt } });
+export function stopTimeLog(id: string, endedAt: Date) {
+  return prisma.timeLog.update({ where: { id, endedAt: null }, data: { endedAt } });
 }
 
 /** Task with Logs Type for Dashboard Purpose */
@@ -75,10 +79,10 @@ export function findOutstandingDashboardData(userId: string) {
       orderBy: { updatedAt: "desc" }
     }),
 
-    prisma.timeLog.findMany({
-      where: { userId, endedAt: null },
-      include: { task: true },
-      orderBy: { startedAt: "asc" },
+    prisma.task.findMany({
+      where: { userId, timeLogs: { some: { endedAt: null } } },
+      include: { timeLogs: { where: { endedAt: null } } },
+      orderBy: { createdAt: "asc" },
     }),
   ]);
 }

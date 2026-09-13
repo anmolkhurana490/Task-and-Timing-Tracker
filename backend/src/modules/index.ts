@@ -1,6 +1,5 @@
 import { authRouter } from "./auth/auth.routes.js";
 import { taskRouter } from "./tasks/task.routes.js";
-import { timeRouter } from "./time-logs/time-logs.routes.js";
 import { dashboardRouter } from "./dashboard/dashboard.routes.js";
 import { Router } from "express";
 
@@ -12,7 +11,6 @@ apiRouter.get("/", (_req, res) => {
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/tasks", taskRouter);
-apiRouter.use("/time-logs", timeRouter);
 apiRouter.use("/dashboard", dashboardRouter);
 
 export default apiRouter;

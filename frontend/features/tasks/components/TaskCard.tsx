@@ -1,10 +1,11 @@
-import { useTimeLogViewModel } from "@/features/timeLogs/timeLogs.viewmodel";
+import { useTaskViewModel } from "../tasks.viewmodel";
 import { Task, TaskStatus } from "../tasks.model";
-import { TimeLog } from "@/features/timeLogs/timeLogs.model";
+import { TimeLog } from "../tasks.model";
+import TaskTimeLogs, { formatDuration, getTimeLogDuration } from "./TaskTimeLogs";
+import { useEffect, useState } from "react";
 
 interface TaskCardProps {
   task: Task;
-  activeLog?: TimeLog;
 }
 
 export const statusLabels: Record<TaskStatus, string> = {
@@ -20,25 +21,47 @@ const statusStyles: Record<TaskStatus, string> = {
 };
 
 /** Presentational task summary with the timer action delegated to the time-log view-model. */
-const TaskCard = ({ task, activeLog }: TaskCardProps) => {
-  const { startTimer, stopTimer } = useTimeLogViewModel();
+const TaskCard = ({ task }: TaskCardProps) => {
+  const { startTimer, stopTimer } = useTaskViewModel();
+
+  const [now, setNow] = useState(() => Date.now());
+
+  // One page-level clock keeps every active task timer in sync without one interval per card.
+  useEffect(() => {
+    const intervalId = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  const totalTrackedSeconds = task.timeLogs?.reduce(
+    (total, log) => total + getTimeLogDuration(log, now),
+    0,
+  ) ?? 0;
+
+  const lastLog = task.timeLogs?.at(0);
+  const activeLog = (lastLog && lastLog.endedAt === null) ? lastLog : null;
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <div className="mb-2 flex flex-wrap items-center gap-2">
-          <h2 className="font-serif text-2xl font-normal tracking-tight">{task.title}</h2>
-          <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${statusStyles[task.status]}`}>{statusLabels[task.status]}</span>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <h2 className="font-serif text-2xl font-normal tracking-tight">{task.title}</h2>
+            <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${statusStyles[task.status]}`}>{statusLabels[task.status]}</span>
+          </div>
+          <p className="max-w-2xl text-sm leading-relaxed text-[#6d7973]">{task.description}</p>
+          <p className="mt-3 text-xs font-bold text-[#476257]">
+            {formatDuration(totalTrackedSeconds)} tracked.
+          </p>
         </div>
-        <p className="max-w-2xl text-sm leading-relaxed text-[#6d7973]">{task.description}</p>
+        <button
+          onClick={() => activeLog ? stopTimer(task.id) : startTimer(task.id)}
+          className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${activeLog ? "bg-[#df7455] text-white" : "border border-[#476257] text-[#476257]"}`}
+          type="button"
+        >
+          {activeLog ? "Stop timer" : "Start timer"}
+        </button>
       </div>
-      <button
-        onClick={() => activeLog ? stopTimer(activeLog.id) : startTimer(task.id)}
-        className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold ${activeLog ? "bg-[#df7455] text-white" : "border border-[#476257] text-[#476257]"}`}
-        type="button"
-      >
-        {activeLog ? "Stop timer" : "Start timer"}
-      </button>
+      <TaskTimeLogs logs={task.timeLogs ?? []} now={now} />
     </div>
   );
 }

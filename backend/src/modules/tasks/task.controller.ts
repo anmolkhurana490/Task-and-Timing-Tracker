@@ -1,12 +1,13 @@
 import type { NextFunction, Response } from "express";
 import type { CustomRequest } from "../../types/express.js";
-import { createTaskService, deleteTaskService, generateTaskSuggestions, getTaskService, getTasksService, updateTaskService } from "./task.service.js";
-import type { SuggestionQueryInput } from "./task.validation.js";
+import { createTaskService, deleteTaskService, generateTaskSuggestions, getTaskService, getTasksService, startTimeService, stopTimeService, updateTaskService } from "./task.service.js";
+import type { SuggestionQueryInput, PaginationInput } from "./task.validation.js";
 
 /** Returns all tasks owned by the authenticated user. */
 export async function getTasksController(req: CustomRequest, res: Response, next: NextFunction) {
   try {
-    const data = await getTasksService(req.userId as string);
+    const query = req.valQuery as PaginationInput;
+    const data = await getTasksService(req.userId as string, query.page, query.limit);
     res.json(data);
   } catch (error) {
     next(error);
@@ -58,6 +59,26 @@ export async function getTaskSuggestionController(req: CustomRequest, res: Respo
   try {
     const query = req.valQuery as SuggestionQueryInput;
     const data = await generateTaskSuggestions(query.user_input);
+    res.json(data);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** Starts tracking the task identified by the route parameter. */
+export async function startTaskController(req: CustomRequest, res: Response, next: NextFunction) {
+  try {
+    const data = await startTimeService(req.userId as string, req.params.id as string);
+    res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/** Stops the active time log identified by the route parameter. */
+export async function stopTaskController(req: CustomRequest, res: Response, next: NextFunction) {
+  try {
+    const data = await stopTimeService(req.userId as string, req.params.id as string);
     res.json(data);
   } catch (error) {
     next(error);

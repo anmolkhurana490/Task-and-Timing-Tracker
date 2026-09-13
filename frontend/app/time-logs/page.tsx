@@ -1,1 +1,0 @@
-export { default } from "@/features/timeLogs/views/TimeLogsView";

@@ -59,7 +59,7 @@ export default function HomeView() {
           </p>
         </Link>
 
-        <Link className="group border border-[#d9ddd4] bg-[#fffefa] p-5 transition-transform hover:-translate-y-1" href="/time-logs">
+        <Link className="group border border-[#d9ddd4] bg-[#fffefa] p-5 transition-transform hover:-translate-y-1" href="/tasks">
           <span className="text-xs font-extrabold uppercase tracking-[.16em] text-[#df7455]">03</span>
           <h2 className="mt-8 font-serif text-2xl font-normal">Keep the record</h2>
           <p className="mt-2 text-sm leading-relaxed text-[#6d7973]">

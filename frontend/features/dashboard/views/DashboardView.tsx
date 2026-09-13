@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDashboardViewModel } from "../dashboard.viewmodel";
-import type { Task } from "@/features/tasks/tasks.model";
-import type { TimeLog } from "@/features/timeLogs/timeLogs.model";
+import type { Task, TimeLog } from "@/features/tasks/tasks.model";
 
 /** Converts backend seconds into the compact duration labels used by dashboard cards. */
 function formatDuration(seconds: number) {
@@ -72,7 +71,7 @@ function WeeklyChart({ weeklySummary }: { weeklySummary: { date: string; totalTa
 }
 
 /** Combines stale tasks and carried-over timers into one attention list. */
-function ReminderList({ tasks, activeLogs }: { tasks: Task[]; activeLogs: TimeLog[] }) {
+function ReminderList({ tasks, activeLogTasks }: { tasks: Task[]; activeLogTasks: Task[] }) {
   const [now] = useState(() => Date.now());
   const reminders = tasks.slice(0, 2);
 
@@ -83,14 +82,14 @@ function ReminderList({ tasks, activeLogs }: { tasks: Task[]; activeLogs: TimeLo
           <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#df7455]">Needs attention</p>
           <h2 className="mt-2 font-serif text-3xl font-normal">Keep the loop closed.</h2>
         </div>
-        <span className="rounded-full bg-[#fff0eb] px-3 py-1 text-xs font-bold text-[#a54e39]">{tasks.length + activeLogs.length}</span>
+        <span className="rounded-full bg-[#fff0eb] px-3 py-1 text-xs font-bold text-[#a54e39]">{tasks.length + activeLogTasks.length}</span>
       </div>
 
       <div className="mt-6 grid gap-3">
-        {activeLogs.slice(0, 2).map((log) => (
-          <div className="border-l-2 border-[#df7455] bg-[#fff5f1] px-4 py-3" key={log.id}>
+        {activeLogTasks.slice(0, 2).map((task) => (
+          <div className="border-l-2 border-[#df7455] bg-[#fff5f1] px-4 py-3" key={task.id}>
             <p className="text-sm font-bold">Timer still running</p>
-            <p className="mt-1 text-xs text-[#6d7973]">{log.task?.title ?? "A task"} · started {new Date(log.startedAt).toLocaleString()}</p>
+            <p className="mt-1 text-xs text-[#6d7973]">{task.title ?? "A task"} · started {new Date(task.timeLogs![0].startedAt).toLocaleString()}</p>
           </div>
         ))}
 
@@ -101,7 +100,7 @@ function ReminderList({ tasks, activeLogs }: { tasks: Task[]; activeLogs: TimeLo
           </div>
         ))}
 
-        {!activeLogs.length && !reminders.length && <p className="text-sm text-[#6d7973]">Nothing stale is asking for your attention.</p>}
+        {!activeLogTasks.length && !reminders.length && <p className="text-sm text-[#6d7973]">Nothing stale is asking for your attention.</p>}
       </div>
 
       <Link className="mt-6 inline-block text-sm font-bold text-[#476257] underline underline-offset-4" href="/tasks">Review tasks</Link>
@@ -119,7 +118,7 @@ export default function DashboardView() {
   const totalTasks = (data?.completedTasks ?? 0) + (data?.notCompletedTasks ?? 0);
   const completion = totalTasks ? Math.round(((data?.completedTasks ?? 0) / totalTasks) * 100) : 0;
   const outstandingTasks = outstanding?.notCompletedTasks ?? [];
-  const activeTimeLogs = outstanding?.activeTimeLogs ?? [];
+  const activeLogTasks = outstanding?.activeLogTasks ?? [];
 
   return (
     <main className="mx-auto max-w-310 px-5 py-10 sm:px-8 sm:py-16">
@@ -143,7 +142,7 @@ export default function DashboardView() {
       {loading && !data ? <p className="text-sm text-[#6d7973]">Loading your productivity...</p> : <>
         <section className="grid gap-3 md:grid-cols-3">
           <Metric label="Focused today" value={formatDuration(data?.totalTimeTracked ?? 0)} detail="Tracked across today's sessions" />
-          <Metric label="Tasks completed" value={String(data?.completedTasks ?? 0)} detail={`${completion}% of today&apos;s tasks`} />
+          <Metric label="Tasks completed" value={String(data?.completedTasks ?? 0)} detail={`${completion}% of today's tasks`} />
           <Metric label="Tasks worked on" value={String(data?.totalTasks ?? 0)} detail="Active productivity signal" />
         </section>
 
@@ -161,7 +160,7 @@ export default function DashboardView() {
             </div>
           </div>
 
-          <ReminderList tasks={outstandingTasks} activeLogs={activeTimeLogs} />
+          <ReminderList tasks={outstandingTasks} activeLogTasks={activeLogTasks} />
         </section>
 
         <section className="mt-8">
@@ -175,7 +174,7 @@ export default function DashboardView() {
             <div className="mt-8 grid grid-cols-3 gap-4 border-t border-[#d9ddd4] pt-5">
               <div><p className="text-2xl font-bold text-[#476257]">{data?.totalTasks ?? 0}</p><p className="mt-1 text-xs text-[#6d7973]">worked on</p></div>
               <div><p className="text-2xl font-bold text-[#476257]">{data?.completedTasks ?? 0}</p><p className="mt-1 text-xs text-[#6d7973]">completed</p></div>
-              <div><p className="text-2xl font-bold text-[#476257]">{activeTimeLogs.length}</p><p className="mt-1 text-xs text-[#6d7973]">active timers</p></div>
+              <div><p className="text-2xl font-bold text-[#476257]">{activeLogTasks.length}</p><p className="mt-1 text-xs text-[#6d7973]">active timers</p></div>
             </div>
           </div>
 
@@ -183,7 +182,7 @@ export default function DashboardView() {
             <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#df7455]">Keep exploring</p>
             <h2 className="mt-2 font-serif text-3xl font-normal">See the details behind the day.</h2>
             <p className="mt-3 text-sm leading-relaxed text-[#6d7973]">Review every focus session and use the pattern to plan your next clear step.</p>
-            <Link className="mt-6 inline-block text-sm font-bold text-[#476257] underline underline-offset-4" href="/time-logs">Review time logs</Link>
+            <Link className="mt-6 inline-block text-sm font-bold text-[#476257] underline underline-offset-4" href="/tasks">Review task history</Link>
           </div>
         </section>
       </>}

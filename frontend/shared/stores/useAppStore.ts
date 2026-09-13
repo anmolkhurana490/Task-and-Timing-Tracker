@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import type { AuthUser } from "@/features/auth/auth.model";
-import type { Task } from "@/features/tasks/tasks.model";
-import { TimeLog } from "@/features/timeLogs/timeLogs.model";
+import type { Task, TimeLog } from "@/features/tasks/tasks.model";
 import type { DailyDashboardData, OutstandingData } from "@/features/dashboard/dashboard.types";
 
 interface AppState {
   user: AuthUser | null;
   tasks: Task[];
-  logs: TimeLog[];
   dashboard: DailyDashboardData | null;
   weeklySummary: DailyDashboardData[];
   outstanding: OutstandingData | null;
@@ -22,9 +20,8 @@ interface AppState {
   replaceTask: (task: Task) => void;
   removeTask: (id: string) => void;
 
-  setLogs: (logs: TimeLog[]) => void;
-  addLog: (log: TimeLog) => void;
-  updateLog: (log: Pick<TimeLog, "id" | "endedAt">) => void;
+  addTaskLog: (taskId: string, log: TimeLog) => void;
+  stopTaskLog: (taskId: string, log: Pick<TimeLog, "id" | "endedAt">) => void;
 }
 
 /** Shared application data. Request status and errors stay inside view-models. */
@@ -48,11 +45,36 @@ export const useAppStore = create<AppState>((set) => ({
   replaceTask: (task) => set((state) => ({ tasks: state.tasks.map((item) => item.id === task.id ? task : item) })),
   removeTask: (id) => set((state) => ({ tasks: state.tasks.filter((task) => task.id !== id) })),
 
-  // Time-log updates merge server responses so existing fields remain available after stop operations.
-  setLogs: (logs) => set({ logs }),
-  addLog: (log) => set((state) => ({ logs: [log, ...state.logs], activeLogId: log.id })),
+  addTaskLog: (taskId, log) =>
+    set((state) => ({
+      tasks: state.tasks.map((task) =>
+        task.id === taskId
+          ? {
+            ...task,
+            timeLogs: [log, ...task.timeLogs ?? []],
+          }
+          : task,
+      ),
+    })),
 
-  updateLog: (log) => set((state) => ({
-    logs: state.logs.map((item) => item.id === log.id ? { ...item, ...log } : item),
-  }))
+  stopTaskLog: (taskId, log) =>
+    set((state) => ({
+      tasks: state.tasks.map((task) => {
+        if (task.id !== taskId || !task.timeLogs || task.timeLogs.length === 0) {
+          return task;
+        }
+
+        return {
+          ...task,
+          timeLogs: task.timeLogs.map((taskLog, index) =>
+            index === 0
+              ? {
+                ...taskLog,
+                ...log
+              }
+              : taskLog,
+          ),
+        };
+      }),
+    })),
 }));

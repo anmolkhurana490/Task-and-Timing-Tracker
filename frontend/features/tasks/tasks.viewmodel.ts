@@ -2,13 +2,14 @@
 
 import { useCallback } from "react";
 import { useState } from "react";
-import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, updateTaskAPI } from "./tasks.repository";
+import { createTaskAPI, deleteTaskAPI, generateTaskSuggestionsAPI, getTasksAPI, startTaskTimerAPI, stopTaskTimerAPI, updateTaskAPI } from "./tasks.repository";
 import { useAppStore } from "@/shared/stores/useAppStore";
 import type { CreateTaskInput, TaskStatus, TaskSuggestion, UpdateTaskInput } from "./tasks.model";
 
 export function useTaskViewModel() {
-  const { tasks, setTasks, addTask, replaceTask, removeTask } = useAppStore();
+  const { tasks, setTasks, addTask, replaceTask, removeTask, addTaskLog, stopTaskLog } = useAppStore();
 
+  const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
   const [suggestions, setSuggestions] = useState<TaskSuggestion[]>([]);
@@ -19,7 +20,8 @@ export function useTaskViewModel() {
     setLoading(true);
     try {
       const tasksData = await getTasksAPI();
-      setTasks(tasksData);
+      setTasks(tasksData.tasks);
+      setPagination(tasksData.pagination);
     }
     catch {
       setError("Unable to load tasks.");
@@ -101,6 +103,24 @@ export function useTaskViewModel() {
     }
   }
 
+  async function startTimer(taskId: string) {
+    try {
+      const logData = await startTaskTimerAPI(taskId);
+      addTaskLog(taskId, logData);
+    } catch {
+      setError("Unable to start timer.");
+    }
+  }
+
+  async function stopTimer(taskId: string) {
+    try {
+      const logData = await stopTaskTimerAPI(taskId);
+      stopTaskLog(taskId, logData);
+    } catch {
+      setError("Unable to stop timer.");
+    }
+  }
+
   return {
     tasks,
     loading,
@@ -114,5 +134,6 @@ export function useTaskViewModel() {
     updateStatus,
     updateTask,
     deleteTask,
+    startTimer, stopTimer
   };
 }

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 /** Protects private pages and keeps authenticated users out of auth screens. */
 export default auth((request) => {
   const isAuthenticated = Boolean(request.auth);
-  const isPrivatePage = ["/dashboard", "/tasks", "/time-logs"].some((path) => request.nextUrl.pathname.startsWith(path));
+  const isPrivatePage = ["/dashboard", "/tasks"].some((path) => request.nextUrl.pathname.startsWith(path));
   const isAuthPage = request.nextUrl.pathname.startsWith("/auth");
 
   if (!isAuthenticated && isPrivatePage) {
@@ -19,5 +19,5 @@ export default auth((request) => {
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/tasks/:path*", "/time-logs/:path*", "/auth/:path*"],
+  matcher: ["/dashboard/:path*", "/tasks/:path*", "/auth/:path*"],
 };

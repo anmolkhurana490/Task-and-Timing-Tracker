@@ -1,12 +1,20 @@
 import { SchemaType, type Schema } from "@google/generative-ai";
-import { NotFoundError } from "../../utils/errors.js";
+import { ConflictError, NotFoundError } from "../../utils/errors.js";
 import { generateAIResponse } from "../../utils/genAI.js";
 import { findTask, findTasks, insertTask, removeTask, updateTask } from "./task.dao.js";
 import { type CreateTaskInput, type UpdateTaskInput, TaskSuggestionSchema, type TaskSuggestionResponse } from "./task.validation.js";
+import { findActiveTimeLog, findActiveTimeLogs, findOwnedTask, findTimeLog, findUserActiveTimeLog, insertTimeLog, stopTimeLog } from "./time-logs.dao.js";
 
-/** Lists the current user's tasks. */
-export function getTasksService(userId: string) {
-  return findTasks(userId);
+/** Lists the current user's tasks with pagination metadata. */
+export async function getTasksService(userId: string, page: number, limit: number) {
+  const [tasks, total] = await findTasks(userId, page, limit);
+  return {
+    tasks,
+    pagination: {
+      page, limit, total,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
 }
 
 /** Gets one task or returns a not-found error. */
@@ -60,4 +68,26 @@ export async function generateTaskSuggestions(userInput: string) {
 
   const suggestions = await generateAIResponse(prompt, taskListSchema);
   return TaskSuggestionSchema.parse(JSON.parse(suggestions));
+}
+
+/** Starts a timer when the task has no active timer. */
+export async function startTimeService(userId: string, taskId: string) {
+  const ownedTask = await findOwnedTask(taskId, userId);
+  if (!ownedTask) throw new NotFoundError("Task not found");
+
+  const timeLog = await findActiveTimeLog(taskId);
+  if (timeLog) throw new ConflictError("Task is already being tracked");
+
+  return insertTimeLog(userId, taskId);
+}
+
+/** Stops an active timer and stores elapsed seconds. */
+export async function stopTimeService(userId: string, taskId: string) {
+  const logData = await findUserActiveTimeLog(taskId, userId);
+  if (!logData) throw new NotFoundError("Active time log not found");
+
+  const endedAt = new Date();
+  await stopTimeLog(logData.id, endedAt);
+
+  return { id: logData.id, endedAt };
 }
